@@ -1,0 +1,100 @@
+from tkinter import *
+from tkinter import ttk
+from tkinter import messagebox
+
+
+f = ("Century", 20, "bold")
+result = None
+class WeightConverter:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Weight and Mass Converter")
+
+        
+        self.input_value = DoubleVar()
+        self.output_value = StringVar()
+        self.input_unit = StringVar()
+        self.output_unit = StringVar()
+
+        
+        units = ["Kilograms", "Grams", "Pounds", "Ounces"]
+        self.from_unit_menu = ttk.Combobox(root, values=units, textvariable=self.input_unit, font=f)
+        self.from_unit_menu.set("Pounds")
+        self.from_unit_menu['state'] = 'readonly'
+        self.from_unit_menu.grid(row=0, column=1, padx=10, pady=10)
+
+        self.to_unit_menu = ttk.Combobox(root, values=units, textvariable=self.output_unit, font=f)
+        self.to_unit_menu.set("Kilograms")
+        self.from_unit_menu['state'] = 'readonly'
+        self.to_unit_menu.grid(row=1, column=1, padx=10, pady=10)
+
+        
+        self.input_entry = Entry(root, textvariable=self.input_value, font=f)
+        self.input_entry.grid(row=0, column=3, padx=10, pady=10)
+
+        
+        self.from_label = Label(root, text="From:", font=f)
+        self.from_label.grid(row=0, column=0, padx=10, pady=10)
+
+        self.to_label = Label(root, text="To:", font=f)
+        self.to_label.grid(row=1, column=0, padx=10, pady=10)
+
+        self.result_label = Label(root, text="Result:", font=f)
+        self.result_label.grid(row=3, column=2, columnspan=2, pady=10)
+
+        
+        self.convert_button = Button(root, text="Convert", command=self.convert, font=f)
+        self.convert_button.grid(row=2, column=1, columnspan=2, pady=10)
+
+    def convert(self):
+        try:
+            input_value = self.input_value.get()
+
+            if input_value <= 0:
+                messagebox.showerror("Error", "Invalid input value. Please enter a positive number.")
+
+            else:
+                from_unit = self.input_unit.get()
+                to_unit = self.output_unit.get()
+
+                if from_unit == to_unit:
+                    result = input_value
+                elif from_unit == "Kilograms" and to_unit == "Grams":
+                    result = input_value * 1000
+                elif from_unit == "Kilograms" and to_unit == "Pounds":
+                    result = input_value * 2.20462
+                elif from_unit == "Kilograms" and to_unit == "Ounces":
+                    result = input_value * 35.274
+                elif from_unit == "Grams" and to_unit == "Kilograms":
+                    result = input_value / 1000
+                elif from_unit == "Grams" and to_unit == "Pounds":
+                    result = input_value / 453.592
+                elif from_unit == "Grams" and to_unit == "Ounces":
+                    result = input_value / 28.3495
+                elif from_unit == "Pounds" and to_unit == "Kilograms":
+                    result = input_value / 2.20462
+                elif from_unit == "Pounds" and to_unit == "Grams":
+                    result = input_value * 453.592
+                elif from_unit == "Pounds" and to_unit == "Ounces":
+                    result = input_value * 16
+                elif from_unit == "Ounces" and to_unit == "Kilograms":
+                    result = input_value / 35.274
+                elif from_unit == "Ounces" and to_unit == "Grams":
+                    result = input_value * 28.3495
+                elif from_unit == "Ounces" and to_unit == "Pounds":
+                    result = input_value / 16
+                else:
+                    raise ValueError("Invalid conversion units selected.")
+                    
+                self.output_value.set(f"{result:.2f} {to_unit}")
+                self.result_label.config(text=f"Result: {result:.2f} {to_unit}")
+
+        except TclError as e:
+            messagebox.showerror("Error", "Enter a Numeric value")
+
+
+if __name__ == "__main__":
+    root = Tk()
+    converter = WeightConverter(root)
+    root.geometry("1200x600+50+50")
+    root.mainloop()
